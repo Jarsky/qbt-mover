@@ -1,8 +1,7 @@
-###########################################
-#
-#       qBt-mover script by Jarsky
-#       v1.2  15/01/2023
-###########################################
+
+#     qBt-mover script by Jarsky
+    v1.2  15/01/2023
+
 
 
 This is a script for qBittorrent CLI and UnRAID. 
@@ -16,7 +15,7 @@ See their WIKI for more info: https://github.com/fedarovich/qbittorrent-cli/wiki
 
 
 
-**# WHY?**
+## WHY?
 
 qBitTorrent locks files that are active. If you're using the Cache in UnRAID, when the daily mover
 runs to move the files to the array, if the files are seeding then the mover will be unable to move them. 
@@ -27,7 +26,7 @@ It will keep checking for a user defined amount of time and then stop the mover 
 
 
 
-# General setup:
+## General setup:
 ---------------
 
 ```console
@@ -44,7 +43,7 @@ Then you will either need to configure settings as sudo (e.g sudo qbt settings s
 or you will need to copy the settings (i.e sudo cp -R ~/.qbt/ /root/.qbt/)
 
 
-# CRON
+## CRON
 -----------
 
 The script can automatically setup CRON using ./qbt-mover.sh -cron
@@ -52,8 +51,9 @@ By default the UnRAID mover runs at 3:40AM daily.
 
 CRON jobs are standard. 
 Setup Example:
-# Will run to pause torrents at 4:58am every day
-# Will run to resume torrents at 5:05am every day. Checking the UnRAID mover before resuming
+
+#### Will run to pause torrents at 4:58am every day
+Will run to resume torrents at 5:05am every day. Checking the UnRAID mover before resuming
 
 ```console
 ## qbt-mover cron
@@ -75,8 +75,10 @@ By default the script logs to: /var/log/qbt-mover.log
 It is good practice to configure a logrotate. 
 That might look something like this:
 
-# sudo touch /etc/logrotate.d/qbt-mover
-# sudo nano /etc/logrotate.d/qbt-mover
+```console
+sudo touch /etc/logrotate.d/qbt-mover
+sudo nano /etc/logrotate.d/qbt-mover
+```
 
 #This example will set max size 2Megabytes then rotate, It will compress logs from the second 
 #and it will allow up to 5 rotates and then delete the oldest. 
@@ -93,5 +95,8 @@ That might look something like this:
 ```
 
 You can test using:
-# sudo logrotate -d /etc/logrotate.d/qbt-mover
+
+```console
+sudo logrotate -d /etc/logrotate.d/qbt-mover
+```
 
