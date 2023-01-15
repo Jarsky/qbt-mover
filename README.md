@@ -1,6 +1,6 @@
 
 #     qBt-mover script by Jarsky
-    v1.2  15/01/2023
+    ## v1.2  15/01/2023
 
 
 
@@ -67,7 +67,7 @@ You can schedule the -force-resume mover straight away after the mover as it tri
 45 minutes with the default settings if the mover is still running. 
 
 
-# LOGS
+## LOGS
 ----------
 
 By default the script logs to: /var/log/qbt-mover.log
