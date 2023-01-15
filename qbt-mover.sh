@@ -85,8 +85,8 @@ function checkSettings() {
 }
 
 if [[ $# -eq 0 ]]; then
-  echo -e "$(dateFormat) ${WARN} No switches were defined."
-  echo -e "$(dateFormat) ${INFO} You need to enter a switch. for a list use $0 --help"
+  echo -e "$(dateFormat) ${WARN} No command was defined."
+  echo -e "$(dateFormat) ${INFO} You need to enter a command. for a list use $0 --help"
   exit 1
 fi
 
@@ -127,8 +127,8 @@ elif [[ $1 == "-force-resume" ]]; then
 
                 # Check if the log contains the desired line
                 if echo "$log" | grep -q "exit.*/usr/local/sbin/mover"; then
-                    echo -e "$(dateFormat) ${INFO} Mover has stopped running." >> $logFile
-                    echo -e "$(dateFormat) ${INFO} Force resuming ALL torrents" >> $logFile
+                    echo -e "$(dateFormat) ${INFO} Mover has stopped running." | tee -a $logFile
+                    echo -e "$(dateFormat) ${INFO} Force resuming ALL torrents" | tee -a $logFile
                     qbt torrent force-resume ALL
                     break
                 fi
@@ -138,8 +138,8 @@ elif [[ $1 == "-force-resume" ]]; then
 
                 # Check if the count has reached countMax
                 if [ $qbtfrCount -eq $countMax ]; then
-                    echo -e "$(dateFormat) ${WARN} Mover is still running. Stopping Mover." >> $logFile
-                    echo -e "$(dateFormat) ${INFO} Force resuming ALL torrents." >> $logFile
+                    echo -e "$(dateFormat) ${WARN} Mover is still running. Stopping Mover." | tee -a $logFile
+                    echo -e "$(dateFormat) ${INFO} Force resuming ALL torrents." | tee -a $logFile
                     ssh $remote_host "mover stop"
                     sleep 5
                     qbt torrent force-resume ALL
@@ -149,14 +149,14 @@ elif [[ $1 == "-force-resume" ]]; then
                 countRemaining=$(expr $countMax - $qbtfrCount)
                 ((min=$sleepDuration/60))
                 ((totaltime=$countRemaining*$min))
-                    echo -e "$(dateFormat) ${WARN} Mover is still running." >> $logFile
-                    echo -e "$(dateFormat) ${INFO} Sleeping for $min minutes." >> $logFile
-                    echo -e "$(dateFormat) ${INFO} Will retry $countRemaining more times (ETA: $totaltime minutes)." >> $logFile
+                    echo -e "$(dateFormat) ${WARN} Mover is still running." | tee -a $logFile
+                    echo -e "$(dateFormat) ${INFO} Sleeping for $min minutes." | tee -a $logFile
+                    echo -e "$(dateFormat) ${INFO} Will retry $countRemaining more times (ETA: $totaltime minutes)." | tee -a $logFile
                 # Wait for sleepDuration seconds
                 sleep $sleepDuration
             done
     else
-            echo -e "$(dateFormat) ${INFO} Force resuming ALL torrents." >> $logFile
+            echo -e "$(dateFormat) ${INFO} Force resuming ALL torrents." | tee -a $logFile
             qbt torrent force-resume ALL
     fi
 
@@ -164,7 +164,7 @@ elif [[ $1 == "-pause" ]]; then
         checkSettings
         # export torrent list as json
         qbt torrent list -F json > $jsonFilename
-        echo -e "$(dateFormat) ${INFO} JSON file exported successfully" >> $logFile
+        echo -e "$(dateFormat) ${INFO} JSON file exported successfully" | tee -a $logFile
 
         #parse json file and find all torrents with "state"
         hashes=""
@@ -176,7 +176,7 @@ elif [[ $1 == "-pause" ]]; then
         for hash in $hashes; do
             name=$(jq -r '.[] | select(.hash=="'$hash'") | .name' $jsonFilename)
             qbt torrent pause $hash
-            echo -e "$(dateFormat) ${INFO} Torrent Paused: Hash ${teal}${hash:0:5}${reset} :: Name $name" >> $logFile
+            echo -e "$(dateFormat) ${INFO} Torrent Paused: Hash ${teal}${hash:0:5}${reset} :: Name $name" | tee -a $logFile
         done
 
         rm -f $jsonFilename
@@ -203,13 +203,13 @@ elif [[ $1 == "-cron" ]]; then
         fi
         if [[ -z `crontab -l | grep "qbt-mover.*pause"` ]]; then
             (crontab -l 2>/dev/null; echo "35 3 * * *      cd $current_dir && ./qbt-mover.sh -pause") | crontab -
-            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser" >> $logFile
-        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser" >> $logFile
+            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser" | tee -a $logFile
+        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser" | tee -a $logFile
         fi
         if [[ -z `crontab -l | grep "qbt-mover.*force-resume mover"` ]]; then
             (crontab -l 2>/dev/null; echo "45 3 * * *      cd $current_dir && ./qbt-mover.sh -force-resume mover") | crontab -
-            echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser" >> $logFile
-        else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser" >> $logFile
+            echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser" | tee -a $logFile
+        else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser" | tee -a $logFile
         fi
     elif [[ $2 == "pause" ]]; then
         checkSettings
@@ -218,8 +218,8 @@ elif [[ $1 == "-cron" ]]; then
         fi
         if [[ -z `crontab -l | grep "qbt-mover.*pause"` ]]; then
             (crontab -l 2>/dev/null; echo "35 3 * * *      cd $current_dir && ./qbt-mover.sh -pause") | crontab -
-            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser" >> $logFile
-        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser" >> $logFile
+            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser" | tee -a $logFile
+        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser" | tee -a $logFile
         fi
 
     elif [[ $2 == "force-resume" ]]; then
@@ -230,8 +230,8 @@ elif [[ $1 == "-cron" ]]; then
             fi
             if [[ -z `crontab -l | grep "qbt-mover.*force-resume mover"` ]]; then
                 (crontab -l 2>/dev/null; echo "45 3 * * *      cd $current_dir && ./qbt-mover.sh -force-resume mover") | crontab -
-                echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser" >> $logFile
-            else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser" >> $logFile
+                echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser" | tee -a $logFile
+            else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser" | tee -a $logFile
             fi
         else
             if [[ -z `crontab -l | grep "## qbt-mover"` ]]; then
@@ -239,18 +239,18 @@ elif [[ $1 == "-cron" ]]; then
             fi
             if [[ -z `crontab -l | grep "qbt-mover.*force-resume$"` ]]; then
                 (crontab -l 2>/dev/null; echo "0 4 * * *      cd $current_dir && ./qbt-mover.sh -force-resume") | crontab -
-                echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] created for $cronuser" >> $logFile
-            else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] already exists for $cronuser" >> $logFile
+                echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] created for $cronuser" | tee -a $logFile
+            else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] already exists for $cronuser" | tee -a $logFile
             fi
         fi
     elif [[ $2 == "remove" ]]; then
         checkSettings
             cronjobs=$(crontab -l | grep "qbt-mover")
             if [[ -z $cronjobs ]]; then
-                echo -e "$(dateFormat) ${ERROR} CRON No qbt-mover jobs found for $cronuser" >> $logFile
+                echo -e "$(dateFormat) ${ERROR} CRON No qbt-mover jobs found for $cronuser" | tee -a $logFile
             else
                 crontab -l | grep -v "qbt-mover" | crontab -
-                echo -e "$(dateFormat) ${INFO} CRON All qbt-mover jobs have been removed from $cronuser" >> $logFile
+                echo -e "$(dateFormat) ${INFO} CRON All qbt-mover jobs have been removed from $cronuser" | tee -a $logFile
             fi
         fi
 fi

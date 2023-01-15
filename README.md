@@ -24,24 +24,24 @@ It will keep checking for a user defined amount of time and then stop the mover 
 
 Install qbittorrent-cli  
 
-Clone qbt-mover
+Install jq (JSON processor)
 
 ```bash
-  git clone https://github.com/Jarsky/qbt-mover.git
+sudo apt update && sudo apt install -y jq
+```
+
+Clone qbt-mover 
+
+```bash
+  git clone https://github.com/Jarsky/qbt-mover.git && chmod +x ./qbt-mover/qbt-mover.sh
 ```
 
 Or wget the qbt-mover.sh file
 
 ```bash
-wget https://raw.githubusercontent.com/Jarsky/qbt-mover/main/qbt-mover.sh
+wget https://raw.githubusercontent.com/Jarsky/qbt-mover/main/qbt-mover.sh && chmod +x ./qbt-mover.sh
 ```
 
-Make qbt-mover executable
-
-```bash
-chmod +x ./qbt-mover.sh
-
-```
 Configure defaults for qbittorrent-cli
 
 ```bash
