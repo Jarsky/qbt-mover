@@ -1,17 +1,17 @@
+# qBt-mover script by Jarsky
 
-#     qBt-mover script by Jarsky
-    ## v1.2  15/01/2023
+### v1.2  15/01/2023
 
 
+## ABOUT
 
-This is a script for qBittorrent CLI and UnRAID. 
-qBittorrent CLI is a command line interface to connect to the web socket for managing qBittorrent. 
+This is a script for qBittorrent CLI and UnRAID.  
+qBittorrent CLI is a command line interface to connect to the web socket for managing qBittorrent.  
 
-This is useful for automation being able to create scripts and interface with the qBitTorrent web API using qBittorrent CLI.
+This is useful for automation being able to create scripts and interface with the qBitTorrent web API using qBittorrent CLI.  
 
-You can get qBittorrent CLI from https://github.com/fedarovich/qbittorrent-cli
-See their WIKI for more info: https://github.com/fedarovich/qbittorrent-cli/wiki
-
+You can get qBittorrent CLI from https://github.com/fedarovich/qbittorrent-cli  
+See their WIKI for more info: https://github.com/fedarovich/qbittorrent-cli/wiki  
 
 
 
@@ -52,8 +52,8 @@ By default the UnRAID mover runs at 3:40AM daily.
 CRON jobs are standard. 
 Setup Example:
 
-#### Will run to pause torrents at 4:58am every day
-Will run to resume torrents at 5:05am every day. Checking the UnRAID mover before resuming
+**Will run to pause torrents at 4:58am every day**
+**Will run to resume torrents at 5:05am every day. Checking the UnRAID mover before resuming**
 
 ```console
 ## qbt-mover cron
