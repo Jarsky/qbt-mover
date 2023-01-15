@@ -253,4 +253,6 @@ elif [[ $1 == "-cron" ]]; then
                 echo -e "$(dateFormat) ${INFO} CRON All qbt-mover jobs have been removed from $cronuser" | tee -a $logFile
             fi
         fi
+    else
+    echo -e "$(dateFormat) ${ERROR} ${red}Invalid Argument '$1' ${reset}: Check your syntax. Use --help for a list"
 fi
