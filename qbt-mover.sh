@@ -36,7 +36,7 @@ countMax=6
 sleepDuration=600
 logLineTail=20
 logFile=/var/log/qbt-mover.log
-remote_host="root@tower"
+remote_host="root@jarskynas"
 states=("stalledUP" "uploading" "errored")
 jsonFilename=qbt.json
 qbtcliSettings=~/.qbt/settings.json
@@ -182,7 +182,6 @@ elif [[ $1 == "-pause" ]]; then
         rm -f $jsonFilename
 
 elif [[ $1 == "-cron" ]]; then
-        checkSettings
         current_dir=$(pwd)
         cronuser=${teal}$(whoami)${reset}
     if [[ $# -eq 1 ]]; then
@@ -198,55 +197,60 @@ elif [[ $1 == "-cron" ]]; then
         echo -e ""
     fi
     if [[ $2 == "all" ]]; then
+        checkSettings
         if [[ -z `crontab -l | grep "## qbt-mover"` ]]; then
             (crontab -l 2>/dev/null; echo "## qbt-mover cron") | crontab -
         fi
         if [[ -z `crontab -l | grep "qbt-mover.*pause"` ]]; then
             (crontab -l 2>/dev/null; echo "35 3 * * *      cd $current_dir && ./qbt-mover.sh -pause") | crontab -
-            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser"
-        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser"
+            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser" >> $logFile
+        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser" >> $logFile
         fi
         if [[ -z `crontab -l | grep "qbt-mover.*force-resume mover"` ]]; then
             (crontab -l 2>/dev/null; echo "45 3 * * *      cd $current_dir && ./qbt-mover.sh -force-resume mover") | crontab -
-            echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser"
-        else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser"
+            echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser" >> $logFile
+        else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser" >> $logFile
         fi
     elif [[ $2 == "pause" ]]; then
+        checkSettings
         if [[ -z `crontab -l | grep "## qbt-mover"` ]]; then
             (crontab -l 2>/dev/null; echo "## qbt-mover cron") | crontab -
         fi
         if [[ -z `crontab -l | grep "qbt-mover.*pause"` ]]; then
             (crontab -l 2>/dev/null; echo "35 3 * * *      cd $current_dir && ./qbt-mover.sh -pause") | crontab -
-            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser"
-        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser"
+            echo -e "$(dateFormat) ${INFO} CRON Job [pause] created for $cronuser" >> $logFile
+        else echo -e "$(dateFormat) ${INFO} CRON Job [pause] already exists for $cronuser" >> $logFile
         fi
+
     elif [[ $2 == "force-resume" ]]; then
+        checkSettings
         if [[ $3 == "mover" ]]; then
             if [[ -z `crontab -l | grep "## qbt-mover"` ]]; then
                 (crontab -l 2>/dev/null; echo "## qbt-mover cron") | crontab -
             fi
             if [[ -z `crontab -l | grep "qbt-mover.*force-resume mover"` ]]; then
                 (crontab -l 2>/dev/null; echo "45 3 * * *      cd $current_dir && ./qbt-mover.sh -force-resume mover") | crontab -
-                echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser"
-            else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser"
-        fi
-        if [[ -z `crontab -l | grep "## qbt-mover"` ]]; then
-            (crontab -l 2>/dev/null; echo "## qbt-mover cron") | crontab -
-        fi
-        if [[ -z `crontab -l | grep "qbt-mover.*force-resume$"` ]]; then
-            (crontab -l 2>/dev/null; echo "0 4 * * *      cd $current_dir && ./qbt-mover.sh -force-resume") | crontab -
-            echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] created for $cronuser"
-        fi
-        else 
-        echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] already exists for $cronuser"
-        fi
+                echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] created for $cronuser" >> $logFile
+            else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume mover] already exists for $cronuser" >> $logFile
+            fi
+        else
+            if [[ -z `crontab -l | grep "## qbt-mover"` ]]; then
+                (crontab -l 2>/dev/null; echo "## qbt-mover cron") | crontab -
+            fi
+            if [[ -z `crontab -l | grep "qbt-mover.*force-resume$"` ]]; then
+                (crontab -l 2>/dev/null; echo "0 4 * * *      cd $current_dir && ./qbt-mover.sh -force-resume") | crontab -
+                echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] created for $cronuser" >> $logFile
+            else echo -e "$(dateFormat) ${INFO} CRON Job [force-resume] already exists for $cronuser" >> $logFile
+            fi
         fi
     elif [[ $2 == "remove" ]]; then
+        checkSettings
             cronjobs=$(crontab -l | grep "qbt-mover")
             if [[ -z $cronjobs ]]; then
-                echo -e "$(dateFormat) ${ERROR} CRON No qbt-mover jobs found for $cronuser"
+                echo -e "$(dateFormat) ${ERROR} CRON No qbt-mover jobs found for $cronuser" >> $logFile
             else
                 crontab -l | grep -v "qbt-mover" | crontab -
-                echo -e "$(dateFormat) ${INFO} CRON All qbt-mover jobs have been removed from $cronuser"
-    fi
+                echo -e "$(dateFormat) ${INFO} CRON All qbt-mover jobs have been removed from $cronuser" >> $logFile
+            fi
+        fi
 fi
