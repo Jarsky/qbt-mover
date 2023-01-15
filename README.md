@@ -16,8 +16,7 @@ See their WIKI for more info: https://github.com/fedarovich/qbittorrent-cli/wiki
 
 
 
-WHY?
-----------
+**# WHY?**
 
 qBitTorrent locks files that are active. If you're using the Cache in UnRAID, when the daily mover
 runs to move the files to the array, if the files are seeding then the mover will be unable to move them. 
@@ -28,12 +27,15 @@ It will keep checking for a user defined amount of time and then stop the mover 
 
 
 
-General setup:
+# General setup:
 ---------------
 
-# qbt settings set url http://localhost:8000
-# qbt settings set username admin
-# qbt settings set password <prompt>
+```console
+qbt settings set url http://localhost:8000
+qbt settings set username admin
+qbt settings set password <prompt>
+```
+
 
 This will generate a settings.json file located at ~/.qbt/settings.json
 
@@ -42,7 +44,7 @@ Then you will either need to configure settings as sudo (e.g sudo qbt settings s
 or you will need to copy the settings (i.e sudo cp -R ~/.qbt/ /root/.qbt/)
 
 
-CRON
+# CRON
 -----------
 
 The script can automatically setup CRON using ./qbt-mover.sh -cron
@@ -53,9 +55,11 @@ Setup Example:
 # Will run to pause torrents at 4:58am every day
 # Will run to resume torrents at 5:05am every day. Checking the UnRAID mover before resuming
 
+```console
 ## qbt-mover cron
 35 3 * * *      cd /home/ubuntu/scripts/qbt-mover && ./qbt-mover.sh -pause
 45 3 * * *      cd /home/ubuntu/scripts/qbt-mover && ./qbt-mover.sh -force-resume mover
+```
 
 
 You can edit the CRON entry to suit if you have changed your mover schedule. 
@@ -63,7 +67,7 @@ You can schedule the -force-resume mover straight away after the mover as it tri
 45 minutes with the default settings if the mover is still running. 
 
 
-LOGS
+# LOGS
 ----------
 
 By default the script logs to: /var/log/qbt-mover.log
@@ -76,6 +80,8 @@ That might look something like this:
 
 #This example will set max size 2Megabytes then rotate, It will compress logs from the second 
 #and it will allow up to 5 rotates and then delete the oldest. 
+
+```console
     /var/log/qbt-mover.log {
             size 2M
             rotate 5
@@ -84,6 +90,7 @@ That might look something like this:
             missingok
             notifempty
     }
+```
 
 You can test using:
 # sudo logrotate -d /etc/logrotate.d/qbt-mover
