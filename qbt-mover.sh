@@ -3,31 +3,20 @@
 #
 #       qbt-mover scripts by Jarsky
 #
-#       Updated:  15/01/2023
-        version="v1.2.2"
-        Name="qbt-mover"
+#       Updated:  19/01/2023
+#       Version:  v1.2.2  
+#       
 #       Summary:
-#
-#       This script is intended for UnRAID and its Cache.
-#       It will find torrents currently stalled or seeding and pause them to release file locks
-#       so they can be moved off the cache. It can also check if the mover has finished and
-#       force-resume all torrents if necessary.
+#           This script is intended for qBitTorrent and UnRAID's Mover. 
+#           Intended to help with moving files off the cache. 
 #
 #       Pre-requisites:
-#       Install qbittorrent-cli:  https://github.com/fedarovich/qbittorrent-cli
-#       You need to setup an SSH key: https://phoenixnap.com/kb/setup-passwordless-ssh
+#           Install qbittorrent-cli:  https://github.com/fedarovich/qbittorrent-cli
+#           Setup an SSH key: https://phoenixnap.com/kb/setup-passwordless-ssh
+#           Install jq: apt install -y jq
 #
 #       Usage:
-#
-#       ./qbt-mover.sh                      Shows available switches
-#       ./qbt-mover.sh -pause               Will pause all active torrents
-#       ./qbt-mover.sh -force-resume        Will force-resume all torrents
-#       ./qbt-mover.sh -force-resume mover  Will check mover has finished before resuming
-#
-#       Mover Check:
-#       Will check the UnRAID log. If the mover hasn't exited, it will sleep and try again
-#       until the script reaches max count, after whichh it will just force-resume anyway.
-#       This is to minimise the time the torrents are stopped from seeding
+#           ./qbt-mover.sh --help         Shows all commands
 #
 #####################################################################################################
 
@@ -39,11 +28,14 @@ logFile=/var/log/qbt-mover.log
 remote_host="root@tower"
 states=("stalledUP" "uploading" "errored")
 jsonFilename=qbt.json
-qbtcliSettings=~/.qbt/settings.json
+qbitCLIsettings=~/.qbt/settings.json
 
 
 ###### You shouldnt need to edit below this line ######
 #######################################################
+
+version="v1.2.2"
+Name="qbt-mover"
 
 dateFormat() {
     date +"[%Y-%m-%d %H:%M:%S]"
@@ -75,8 +67,8 @@ function logCheck() {
     fi
     }
 
-function qbtcliCheck() {
-    if [ ! -f $qbtcliSettings ]; then
+function qbitCLIcheck() {
+    if [ ! -f $qbitCLIsettings ]; then
         echo -e "$(dateFormat) ${WARN} The qBitTorrent CLI settings file hasn't been configured."
         echo -e "$(dateFormat) ${WARN} Make sure to run 'qbt settings' to check configuration."
     fi
@@ -91,7 +83,7 @@ function jqCheck() {
 
 function checkSettings() {
     logCheck
-    qbtcliCheck
+    qbitCLIcheck
     jqCheck
     }
 
