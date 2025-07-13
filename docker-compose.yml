@@ -1,0 +1,17 @@
+services:
+  qbt-mover:
+    build: .
+    container_name: qbt-mover
+    volumes:
+      - ./.data/config:/app/config
+      - ./.data/logs:/app/logs
+      - ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+      - ~/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
+    networks:
+      - mediabox
+    env_file:
+      - .env
+    restart: unless-stopped
+networks:
+  mediabox:
+    external: true
