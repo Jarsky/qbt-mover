@@ -2,4 +2,4 @@ qbt-forceresume.sh
 qbt-pause.sh
 
 .env
-
+.cursorignore
