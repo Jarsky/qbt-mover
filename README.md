@@ -1,3 +1,4 @@
+![qBt-mover](https://github.com/Jarsky/qbt-mover/blob/main/qBT-mover_logo.jpg)
 
 # qBt-mover
 
