@@ -1,5 +1,9 @@
-qbt-forceresume.sh
-qbt-pause.sh
-
 .env
-.cursorignore
+.data/
+secrets.env
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/

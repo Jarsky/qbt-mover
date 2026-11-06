@@ -1,33 +1,21 @@
-# Use the lightest OS with required dependencies
-FROM alpine:latest
+FROM alpine:3.24
 
-# Add edge/testing repo for qbittorrent-cli
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && apk add --no-cache \
+        dcron \
+        openssh-client \
+        python3 \
+        tzdata \
+        qbittorrent-cli@testing
 
-# Install required dependencies (use dcron instead of cron)
-RUN apk add --no-cache \
-    python3 \
-    py3-pip \
-    jq \
-    openssh-client \
-    dcron \
-    qbittorrent-cli
-
-# Set working directory
 WORKDIR /app
 
-# Copy the script and requirements
-RUN mkdir -p /root/.config/qbt
-COPY . .
+COPY src/qbt_mover/ /app/qbt_mover/
+COPY config/config.ini.example /app/defaults/config.ini
+COPY --chmod=755 docker/entrypoint.sh /app/entrypoint.sh
+COPY --chmod=755 docker/askpass.sh /usr/local/libexec/qbt-mover-askpass
+COPY --chmod=755 docker/qbt-mover.sh /usr/local/bin/qbt-mover
 
-# Ensure the script is executable
-RUN chmod +x /app/qbt-mover.py
-RUN mkdir -p /app/logs
-RUN touch /app/logs/qbt-mover.log
+HEALTHCHECK --interval=1m --timeout=5s CMD ["pgrep", "crond"]
 
-
-# Entry script to handle cron dynamically
-RUN chmod +x /app/entrypoint.sh
-
-# Start the entrypoint script
 CMD ["/app/entrypoint.sh"]
