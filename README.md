@@ -124,7 +124,7 @@ Run these with `docker exec qbt-mover qbt-mover <command>`:
 
 ## Restricting the SSH key
 
-The key only needs these three commands on Unraid, so you can limit it there with a `command=` rule in `authorized_keys`:
+The key only needs these three commands on Unraid, so you can limit it there. In `authorized_keys`, use a `command=` rule pointing at a script that checks `$SSH_ORIGINAL_COMMAND` against this list and runs only exact matches:
 
 ```
 echo connected
@@ -134,13 +134,14 @@ nohup mover start >/dev/null 2>&1 &
 
 ## Logs
 
-View logs with `docker logs qbt-mover`. They're also written to `.data/logs/qbt-mover.log`, which rotates at 10 MB and keeps three old files.
+View logs with `docker logs qbt-mover`. They're also written to `.data/logs/qbt-mover.log`, which rotates at 10 MB and keeps three old files. New log files are readable by root only.
 
 ## Upgrading from 1.x
 
 1. Create `secrets.env` as in [setup](#setup) and move `QBT_LOGIN` and `QBT_PASSWORD` into it from `.env`.
-2. Set `SSH_KEY_PATH` in `.env` and `FORCE_START_MODE` if you want something other than `restore`.
-3. Run `docker compose up -d --build`.
+2. Set `SSH_KEY_PATH` and `DOCKER_NETWORK` in `.env`, and `FORCE_START_MODE` if you want something other than `restore`.
+3. Add `queuedUP` to `states` in `.data/config/config.ini`. An existing file keeps its old list, so queued torrents wouldn't be paused otherwise.
+4. Run `docker compose up -d --build`.
 
 `config.ini` and any torrents still paused carry over. Images built by 1.x copied `.env` into the image, so remove old images if they contained a password.
 
