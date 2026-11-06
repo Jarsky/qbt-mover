@@ -1,0 +1,6 @@
+# Allowlist: nothing reaches the build, so nothing secret can end up in an image
+*
+!src/qbt_mover/
+!config/config.ini.example
+!docker/
+**/__pycache__

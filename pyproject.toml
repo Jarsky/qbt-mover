@@ -1,0 +1,22 @@
+[project]
+name = "qbt-mover"
+version = "2.0.0"
+description = "Pauses the qBittorrent torrents that would block Unraid's mover, runs the mover, then resumes them."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["legacy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "UP"]

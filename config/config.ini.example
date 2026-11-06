@@ -1,0 +1,7 @@
+# Optional settings file. Environment variables in .env take priority over these.
+[settings]
+# Torrents in these states are paused before the mover runs
+states = ["forcedUP", "stalledUP", "uploading", "queuedUP", "error"]
+
+# Resume even if the mover is still running once torrents have been paused this long
+max_pause_hours = 4

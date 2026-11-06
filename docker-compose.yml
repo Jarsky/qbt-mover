@@ -2,16 +2,27 @@ services:
   qbt-mover:
     build: .
     container_name: qbt-mover
+    restart: unless-stopped
+    env_file:
+      - .env
+    secrets:
+      - qbt_mover
     volumes:
       - ./.data/config:/app/config
       - ./.data/logs:/app/logs
-      - ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro
-      - ~/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
+      - ${SSH_KEY_PATH:-~/.ssh/id_ed25519}:/root/.ssh/id_ed25519:ro
+    tmpfs:
+      - /run/qbt-mover:mode=0700
+    security_opt:
+      - no-new-privileges:true
     networks:
-      - mediabox
-    env_file:
-      - .env
-    restart: unless-stopped
+      - qbt
+
+secrets:
+  qbt_mover:
+    file: ./secrets.env
+
 networks:
-  mediabox:
+  qbt:
     external: true
+    name: ${DOCKER_NETWORK:?Set DOCKER_NETWORK in .env}
