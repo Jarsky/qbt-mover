@@ -22,8 +22,18 @@ def format_counts(counts):
     return ", ".join(f"{count} {state}" for state, count in sorted(counts.items())) or "none"
 
 
-DOWNLOAD_STATES = ("downloading", "allocating", "metaDL", "forcedMetaDL", "forcedDL", "stalledDL", "queuedDL",
-                   "checkingDL", "pausedDL", "stoppedDL")
+DOWNLOAD_STATES = (
+    "downloading",
+    "allocating",
+    "metaDL",
+    "forcedMetaDL",
+    "forcedDL",
+    "stalledDL",
+    "queuedDL",
+    "checkingDL",
+    "pausedDL",
+    "stoppedDL",
+)
 
 
 def is_complete(torrent):

@@ -75,8 +75,14 @@ def test_all_mode_forces_every_torrent_without_a_mover_cycle(make_settings):
 
 
 def test_all_mode_leaves_unfinished_downloads_to_the_queue(make_settings):
-    qb = FakeQB([dict(torrent("half", "stalledUP"), progress=0.4), dict(torrent("full", "stalledUP"), progress=1.0),
-                 torrent("dl", "downloading"), torrent("meta", "metaDL")])
+    qb = FakeQB(
+        [
+            dict(torrent("half", "stalledUP"), progress=0.4),
+            dict(torrent("full", "stalledUP"), progress=1.0),
+            torrent("dl", "downloading"),
+            torrent("meta", "metaDL"),
+        ]
+    )
     assert Mover(make_settings(force_start_mode="all"), qb, FakeRemote()).scheduled()
     assert qb.forced_calls == [["full"]]
 
