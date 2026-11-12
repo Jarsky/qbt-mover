@@ -22,6 +22,17 @@ def format_counts(counts):
     return ", ".join(f"{count} {state}" for state, count in sorted(counts.items())) or "none"
 
 
+DOWNLOAD_STATES = ("downloading", "allocating", "metaDL", "forcedMetaDL", "forcedDL", "stalledDL", "queuedDL",
+                   "checkingDL", "pausedDL", "stoppedDL")
+
+
+def is_complete(torrent):
+    """Finished downloading. Force-starting a download would skip qBittorrent's download queue."""
+    if "progress" in torrent:
+        return torrent["progress"] >= 1
+    return torrent.get("state") not in DOWNLOAD_STATES
+
+
 def was_forced(torrent):
     return bool(torrent.get("force_start")) or "forced" in torrent.get("original_state", "").lower()
 
@@ -215,7 +226,8 @@ class Mover:
         return True
 
     def force_start_pass(self):
-        """In "all" mode, force-start every torrent in the client, except while the mover has torrents paused."""
+        """In "all" mode, force-start every finished torrent in the client, except while the mover has torrents paused.
+        Downloads are left to qBittorrent's queue: force-starting them would run every download at once."""
         if self.settings.force_start_mode != MODE_ALL:
             return True
         if self.load_paused():
@@ -224,7 +236,7 @@ class Mover:
         torrents = self.qb.list_torrents()
         if torrents is None:
             return False
-        eligible = [t for t in torrents if not t.get("force_start")]
+        eligible = [t for t in torrents if not t.get("force_start") and is_complete(t)]
         if not eligible:
             logger.info("Force-start pass: nothing to do")
             return True

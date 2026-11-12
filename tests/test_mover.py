@@ -32,7 +32,7 @@ def cycle(settings, torrents=None):
     [
         ("restore", {"forced"}),
         ("running", {"forced", "stalled", "uploading", "queued"}),
-        ("all", {"forced", "stalled", "uploading", "queued", "broken", "downloading", "user-stopped"}),
+        ("all", {"forced", "stalled", "uploading", "queued", "broken", "user-stopped"}),  # not the download
     ],
 )
 def test_mode_controls_what_is_forced_after_a_cycle(make_settings, mode, expected):
@@ -70,8 +70,15 @@ def test_all_mode_forces_every_torrent_without_a_mover_cycle(make_settings):
     )
     mover = Mover(make_settings(force_start_mode="all"), qb, FakeRemote())
     assert mover.scheduled()
-    assert qb.forced() == {"new", "q", "done", "stopped", "dl"}
-    assert qb.forced_calls == [["new", "q", "stopped", "dl"]]
+    assert qb.forced() == {"new", "q", "done", "stopped"}  # the queued download is left to the queue
+    assert qb.forced_calls == [["new", "q", "stopped"]]
+
+
+def test_all_mode_leaves_unfinished_downloads_to_the_queue(make_settings):
+    qb = FakeQB([dict(torrent("half", "stalledUP"), progress=0.4), dict(torrent("full", "stalledUP"), progress=1.0),
+                 torrent("dl", "downloading"), torrent("meta", "metaDL")])
+    assert Mover(make_settings(force_start_mode="all"), qb, FakeRemote()).scheduled()
+    assert qb.forced_calls == [["full"]]
 
 
 @pytest.mark.parametrize("mode", ["restore", "running"])

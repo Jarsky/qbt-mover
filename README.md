@@ -83,12 +83,13 @@ Set `FORCE_START_MODE` in `.env`:
 |---|---|---|
 | `restore` (default) | Only torrents that were force-started before the pause | On resume |
 | `running` | Every torrent the pause stopped: running, forced or queued | On resume |
-| `all` | Every torrent in qBittorrent | On resume and every scheduled run |
+| `all` | Every finished torrent in qBittorrent (downloads stay in qBittorrent's queue) | On resume and every scheduled run |
 
 `all` is for keeping everything seeding, so it has real side effects:
 
 - It starts torrents you stopped yourself, so they won't stay stopped.
-- It force-starts downloads too, which ignores qBittorrent's download and queue limits.
+- Downloads aren't force-started by the scheduled pass, so qBittorrent's download limit still applies; they're
+  force-started once they finish.
 - It waits while torrents are paused for the mover, so it won't interfere with a mover run.
 
 Modes only turn force-start on. Changing to a lower mode doesn't undo it on torrents that are already forced.

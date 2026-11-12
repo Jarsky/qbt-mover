@@ -1,6 +1,6 @@
 [project]
 name = "qbt-mover"
-version = "2.0.0"
+version = "2.0.1"
 description = "Pauses the qBittorrent torrents that would block Unraid's mover, runs the mover, then resumes them."
 readme = "README.md"
 license = { file = "LICENSE" }
